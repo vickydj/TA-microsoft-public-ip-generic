@@ -300,6 +300,10 @@
                                         "label": "CSV"
                                     },
                                     {
+                                        "value": "xml",
+                                        "label": "XML"
+                                    },
+                                    {
                                         "value": "raw",
                                         "label": "RAW"
                                     }
@@ -309,8 +313,8 @@
                         {
                             "field": "url_region",
                             "label": "URL region",
-                            "help": "",
-                            "required": true,
+                            "help": "URL segment en-us | en-in",
+                            "required": false,
                             "type": "singleSelect",
                             "defaultValue": "in",
                             "options": {

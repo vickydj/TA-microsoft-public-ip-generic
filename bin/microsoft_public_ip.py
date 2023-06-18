@@ -55,8 +55,8 @@ class ModInputmicrosoft_public_ip(modinput_wrapper.base_modinput.BaseModInput):
                                          required_on_create=True,
                                          required_on_edit=False))
         scheme.add_argument(smi.Argument("url_region", title="URL region",
-                                         description="",
-                                         required_on_create=True,
+                                         description="URL segment en-us | en-in",
+                                         required_on_create=False,
                                          required_on_edit=False))
         return scheme
 

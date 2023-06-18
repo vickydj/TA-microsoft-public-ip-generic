@@ -7,11 +7,18 @@ import datetime
 from lxml import html
 import json
 import csv
+from urllib.parse import urlsplit
+import xml.etree.ElementTree as ET
 
 def validate_input(helper, definition):
+    parameters = definition.parameters
+    input_value = parameters.get('download_url_id', None)
     pass
 
-
+def is_https_url(url):
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme == 'https'
+    
 def get_download_link(helper,url):
 
     headers = {
@@ -24,17 +31,18 @@ def get_download_link(helper,url):
         tree = html.fromstring(response.content)
         element = tree.xpath('//a[@data-bi-id="downloadretry"]')
         deep_link = element[0].attrib["href"]
-        helper.log_debug("deeplink : {}".format(deep_link))
-
+        helper.log_debug("Check deeplink is https : {}".format(deep_link))
+        
+        if (is_https_url(deep_link)):
+            return deep_link
+        
     except Exception as e:
         helper.log_error("Exception on getting deep_link : {}".format(e))
         os._exit(1)
 
-    return deep_link
 
 def index_events(helper,ew,item):
 
-    # get and set the meta values for each event
     index=helper.get_arg('index')
     input_name = helper.get_input_stanza_names()
     sourcetype = helper.get_sourcetype()
@@ -65,10 +73,11 @@ def index_json(helper,ew,response):
         index_counter+=1
         text=json.dumps(i)
         index_events(helper,ew,text)
+    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(index_counter,helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
     return
 
 def index_csv(helper,ew,response):
-    helper.log_debug("CSV to JSON : {} ".format(response.text))
+    
     index_counter=0
     csv=response.text
     rows = csv.split('\n')
@@ -83,9 +92,33 @@ def index_csv(helper,ew,response):
 
         helper.log_debug("csv_json_converted_event: {}".format(data))
         index_events(helper,ew,"{}".format(json.dumps(data)))
+    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(index_counter,helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
     return
 
+def index_xml(helper, ew, response):
+    
+    index_counter = 0
 
+    xml_tree = ET.fromstring(response.text)
+    json_data = {}
+
+    for region in xml_tree.findall('Region'):
+        region_name = region.get('Name')
+        ip_ranges = []
+        index_counter += 1
+        
+        for ip_range in region.findall('IpRange'):
+            subnet = ip_range.get('Subnet')
+            ip_ranges.append(subnet)
+        json_data[region_name] = ip_ranges
+
+    helper.log_debug("xml_json_converted_event: {}".format(json.dumps(json_data)))
+    index_events(helper,ew,"{}".format(json.dumps(json_data)))
+
+    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(
+      index_counter, helper.get_arg('index'), helper.get_sourcetype(),
+      "Microsoft://{}".format(helper.get_input_stanza_names())))
+    return
 
 def download_data(helper,deep_link):
     try:
@@ -99,7 +132,6 @@ def download_data(helper,deep_link):
     
 def collect_events(helper, ew):
 
-    # init values
     url="https://www.microsoft.com/en-{}/download/confirmation.aspx?id={}".format(helper.get_arg('url_region'),helper.get_arg('download_url_id'))
 
     deep_link=get_download_link(helper,url)
@@ -108,13 +140,14 @@ def collect_events(helper, ew):
         file_format_local=helper.get_arg('file_format')
 
         if file_format_local.lower() == 'json':
-            count=index_json(helper,ew,response)
+            index_json(helper,ew,response)
         elif file_format_local.lower() == 'csv':
-            count=index_csv(helper,ew,response)
+            index_csv(helper,ew,response)
+        elif file_format_local.lower() == 'xml':
+            index_xml(helper,ew,response)
         else:
-            count=index_events(helper,ew,response.text)
-        
-        helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(count,helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
+            index_events(helper,ew,response.text)
+            helper.log_info("Indexed raw events into index={} sourcetype={} source={}".format(helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
                 
     except Exception as e:
         helper.log_error("Exception while indexing : {}".format(e))

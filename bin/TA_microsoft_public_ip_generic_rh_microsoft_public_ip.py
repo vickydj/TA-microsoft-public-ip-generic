@@ -52,7 +52,7 @@ fields = [
     ), 
     field.RestField(
         'url_region',
-        required=True,
+        required=False,
         encrypted=False,
         default='in',
         validator=None
