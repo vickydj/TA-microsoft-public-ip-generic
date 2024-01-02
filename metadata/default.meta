@@ -6,3 +6,16 @@ export = system
 [views]
 access = read : [ * ], write : [ admin ]
 export = none
+
+[views/data_health]
+version = 9.1.2
+modtime = 1702807417.613820000
+
+[ta_microsoft_public_ip_generic_settings/proxy]
+version = 9.1.2
+modtime = 1702806695.622069000
+
+[inputs/microsoft_public_ip%3A%2F%2FServiceTags_Public_cloud]
+owner = admin
+version = 9.1.2
+modtime = 1702805589.744356000

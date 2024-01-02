@@ -1,0 +1,652 @@
+
+<dashboard version="2" theme="dark">
+    <label>Health</label>
+    <description></description>
+    <definition><![CDATA[
+{
+	"visualizations": {
+		"viz_kIZwglj0": {
+			"type": "splunk.rectangle"
+		},
+		"viz_9ZZ5XqXM": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-desktop__65679a5e-ea9f-4dfc-9a72-e31b0f8b10ef.svg"
+			}
+		},
+		"viz_gXHY2S7y": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-firewall__037c3797-3676-4b94-aa5f-01293cafab69.svg"
+			}
+		},
+		"viz_KzYSPh4a": {
+			"type": "abslayout.line",
+			"dataSources": {
+				"primary": "ds_slobfDXs"
+			},
+			"options": {
+				"fromArrow": true,
+				"toArrow": true,
+				"strokeDasharray": 4,
+				"strokeWidth": 3,
+				"strokeColor": "> strokeDataPoint | rangeValue(strokeColorEditorConfig)"
+			},
+			"context": {
+				"strokeColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			}
+		},
+		"viz_8PjQn0z2": {
+			"type": "abslayout.line",
+			"options": {
+				"toArrow": true,
+				"strokeWidth": 6,
+				"strokeColor": "> strokeDataPoint | rangeValue(strokeColorEditorConfig)"
+			},
+			"dataSources": {
+				"primary": "ds_BQxRSY1j"
+			},
+			"context": {
+				"strokeColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			}
+		},
+		"viz_1bf1nhAF": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeColor": "> strokeDataPoint | rangeValue(strokeColorEditorConfig)",
+				"fromArrow": true,
+				"strokeWidth": 6,
+				"strokeDataPoint": "> strokeDataSeries | lastPoint()",
+				"strokeDataSeries": "> primary | seriesByName('success_failure_ratio')"
+			},
+			"context": {
+				"strokeColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			},
+			"dataSources": {
+				"primary": "ds_QvPrI6Ho"
+			}
+		},
+		"viz_I9iW2pRT": {
+			"type": "abslayout.line",
+			"options": {
+				"toArrow": true,
+				"strokeWidth": 6,
+				"strokeColor": "> strokeDataPoint | rangeValue(strokeColorEditorConfig)"
+			},
+			"dataSources": {
+				"primary": "ds_QvPrI6Ho"
+			},
+			"context": {
+				"strokeColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			}
+		},
+		"viz_4TDZzU4a": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-cloud__b26f30f1-329e-4739-89ab-0a8a8bd24e7d.svg"
+			}
+		},
+		"viz_snu6bime": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-load-balancer__4a4261a1-51e2-45aa-b89d-2911d1ceac62.svg"
+			}
+		},
+		"viz_aflHl1R3": {
+			"type": "splunk.rectangle"
+		},
+		"viz_PwsQu39J": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-datacenters__440605f5-471f-4bba-ab7d-80e274222c77.svg"
+			}
+		},
+		"viz_s02Ap9Wd": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeDasharray": 4,
+				"fromArrow": true,
+				"strokeWidth": 3
+			}
+		},
+		"viz_ZxDXfAKk": {
+			"type": "splunk.singlevalueradial",
+			"options": {
+				"majorColor": "> majorValue | rangeValue(majorColorEditorConfig)",
+				"backgroundColor": "transparent"
+			},
+			"dataSources": {
+				"primary": "ds_BQxRSY1j"
+			},
+			"context": {
+				"majorColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			}
+		},
+		"viz_bGXC7A2k": {
+			"type": "splunk.singlevalueradial",
+			"options": {
+				"majorColor": "> majorValue | rangeValue(majorColorEditorConfig)",
+				"backgroundColor": "transparent"
+			},
+			"dataSources": {
+				"primary": "ds_QvPrI6Ho"
+			},
+			"context": {
+				"majorColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 50
+					},
+					{
+						"value": "#D94E17",
+						"from": 50,
+						"to": 70
+					},
+					{
+						"value": "#CBA700",
+						"from": 70,
+						"to": 90
+					},
+					{
+						"value": "#669922",
+						"from": 90,
+						"to": 99
+					},
+					{
+						"value": "#118832",
+						"from": 99
+					}
+				]
+			}
+		},
+		"viz_TWPlooFy": {
+			"type": "splunk.markdown",
+			"options": {
+				"markdown": "**Microsoft DataCenter**\n"
+			}
+		},
+		"viz_8mWZF8wD": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-server__3fcecd0d-1645-4745-bdec-9a612660b662.svg"
+			}
+		},
+		"viz_fo2CxICC": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"icon": "splunk-enterprise-kvstore://icon-datastore__6267aa47-166b-4079-9801-df148e603b43.svg"
+			},
+			"dataSources": {
+				"primary": "ds_pR6NxpP7"
+			}
+		},
+		"viz_L0GYdOqK": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-datastores__bc6a3e09-0548-405c-a5aa-916e6b8b5069.svg",
+				"backgroundColor": "#708794"
+			}
+		},
+		"viz_z6eOwMXh": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-datastores__bc6a3e09-0548-405c-a5aa-916e6b8b5069.svg",
+				"backgroundColor": "#708794"
+			}
+		},
+		"viz_mfdaVIpI": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-datastores__bc6a3e09-0548-405c-a5aa-916e6b8b5069.svg",
+				"backgroundColor": "#708794"
+			}
+		}
+	},
+	"dataSources": {
+		"ds_aoqz4cda": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=\"_internal\" sourcetype=\"tamicrosoftpublicipgeneric:log\"",
+				"queryParameters": {
+					"earliest": "$global_time.earliest$",
+					"latest": "$global_time.latest$"
+				}
+			},
+			"name": "base-internal"
+		},
+		"ds_slobfDXs": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_aoqz4cda",
+				"query": "| search \"Proxy is not enabled!\" OR \"Cannot connect to proxy\" \n| eval connection_status = case(\n    match(_raw, \"Proxy is not enabled!\"), 1,\n    match(_raw, \"Cannot connect to proxy\" ), -1,\n    true(), 0\n    ) \n| stats count(eval(connection_status > 0)) as success_count, count(eval(connection_status < 0)) as failure_count \n| eval success_failure_ratio = if(failure_count > 0, (success_count / (success_count + failure_count)) * 100, 100) \n| table success_failure_ratio, success_count, failure_count"
+			},
+			"name": "proxy-connection"
+		},
+		"ds_BQxRSY1j": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_aoqz4cda",
+				"query": "| search \"Internet connection success\" OR \"Internet connection not available\"\r\n| eval connection_status = case(\r\n    match(_raw, \"Internet connection success\"), 1,\r\n    match(_raw, \"Internet connection not available\"), -1,\r\n    true(), 0\r\n)\r\n| stats count(eval(connection_status > 0)) as success_count, count(eval(connection_status < 0)) as failure_count \r\n| eval success_failure_ratio = if(failure_count > 0, (success_count / (success_count + failure_count)) * 100, 100)\r\n| table success_failure_ratio, success_count, failure_count"
+			},
+			"name": "internet-connection"
+		},
+		"ds_Mp2pf36P": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_aoqz4cda",
+				"query": "| search \"Indexed * events into index\" OR \"Error processing data:\" \r\n| eval connection_status = case(\r\n    match(_raw, \"events into index\"), 1,\r\n    match(_raw, \"Error processing data:\"), -1,\r\n    true(), 0\r\n) \r\n| stats count(eval(connection_status > 0)) as success_count, count(eval(connection_status < 0)) as failure_count \r\n| eval success_failure_ratio = if(failure_count > 0, (success_count / (success_count + failure_count)) * 100, 100)\r\n| table success_failure_ratio, success_count, failure_count"
+			},
+			"name": "data-connection"
+		},
+		"ds_QvPrI6Ho": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_aoqz4cda",
+				"query": "| search \"Check deeplink is https\" OR \"Exception on getting deep_link\" \r\n| eval connection_status = case(\r\n    match(_raw, \"Check deeplink is https\"), 1,\r\n    match(_raw, \"Exception on getting deep_link\"), -1,\r\n    true(), 0\r\n    ) \r\n| stats count(eval(connection_status > 0)) as success_count, count(eval(connection_status < 0)) as failure_count \r\n| eval success_failure_ratio = if(failure_count > 0, (success_count / (success_count + failure_count)) * 100, 100)\r\n| table success_failure_ratio, success_count, failure_count"
+			},
+			"name": "microsoft-site-connection"
+		},
+		"ds_pR6NxpP7": {
+			"type": "ds.search",
+			"options": {
+				"query": "| tstats count WHERE index=* sourcetype=* source=\"Microsoft://*\""
+			},
+			"name": "indexed-data"
+		}
+	},
+	"defaults": {
+		"dataSources": {
+			"ds.search": {
+				"options": {
+					"queryParameters": {
+						"latest": "$global_time.latest$",
+						"earliest": "$global_time.earliest$"
+					}
+				}
+			}
+		}
+	},
+	"inputs": {
+		"input_global_trp": {
+			"type": "input.timerange",
+			"options": {
+				"token": "global_time",
+				"defaultValue": "-24h@h,now"
+			},
+			"title": "Global Time Range"
+		}
+	},
+	"layout": {
+		"type": "absolute",
+		"options": {
+			"width": 1440,
+			"height": 700,
+			"display": "auto"
+		},
+		"structure": [
+			{
+				"item": "viz_KzYSPh4a",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_9ZZ5XqXM",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_gXHY2S7y",
+						"port": "w"
+					}
+				}
+			},
+			{
+				"item": "viz_8PjQn0z2",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_kIZwglj0",
+						"port": "n"
+					},
+					"to": {
+						"item": "viz_ZxDXfAKk",
+						"port": "w"
+					}
+				}
+			},
+			{
+				"item": "viz_1bf1nhAF",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_8mWZF8wD",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_PwsQu39J",
+						"port": "w"
+					}
+				}
+			},
+			{
+				"item": "viz_I9iW2pRT",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_ZxDXfAKk",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_bGXC7A2k",
+						"port": "n"
+					}
+				}
+			},
+			{
+				"item": "viz_aflHl1R3",
+				"type": "block",
+				"position": {
+					"x": 930,
+					"y": 290,
+					"w": 480,
+					"h": 360
+				}
+			},
+			{
+				"item": "viz_kIZwglj0",
+				"type": "block",
+				"position": {
+					"x": 80,
+					"y": 300,
+					"w": 420,
+					"h": 340
+				}
+			},
+			{
+				"item": "viz_9ZZ5XqXM",
+				"type": "block",
+				"position": {
+					"x": 100,
+					"y": 390,
+					"w": 90,
+					"h": 80
+				}
+			},
+			{
+				"item": "viz_gXHY2S7y",
+				"type": "block",
+				"position": {
+					"x": 330,
+					"y": 330,
+					"w": 90,
+					"h": 80
+				}
+			},
+			{
+				"item": "viz_4TDZzU4a",
+				"type": "block",
+				"position": {
+					"x": 580,
+					"y": -20,
+					"w": 250,
+					"h": 250
+				}
+			},
+			{
+				"item": "viz_snu6bime",
+				"type": "block",
+				"position": {
+					"x": 1080,
+					"y": 310,
+					"w": 350,
+					"h": 230
+				}
+			},
+			{
+				"item": "viz_PwsQu39J",
+				"type": "block",
+				"position": {
+					"x": 950,
+					"y": 450,
+					"w": 160,
+					"h": 190
+				}
+			},
+			{
+				"item": "viz_s02Ap9Wd",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_PwsQu39J",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_bGXC7A2k",
+						"port": "s"
+					}
+				}
+			},
+			{
+				"item": "viz_ZxDXfAKk",
+				"type": "block",
+				"position": {
+					"x": 630,
+					"y": 70,
+					"w": 150,
+					"h": 100
+				}
+			},
+			{
+				"item": "viz_bGXC7A2k",
+				"type": "block",
+				"position": {
+					"x": 1120,
+					"y": 380,
+					"w": 110,
+					"h": 80
+				}
+			},
+			{
+				"item": "viz_TWPlooFy",
+				"type": "block",
+				"position": {
+					"x": 940,
+					"y": 340,
+					"w": 150,
+					"h": 40
+				}
+			},
+			{
+				"item": "viz_8mWZF8wD",
+				"type": "block",
+				"position": {
+					"x": 310,
+					"y": 470,
+					"w": 120,
+					"h": 140
+				}
+			},
+			{
+				"item": "viz_fo2CxICC",
+				"type": "block",
+				"position": {
+					"x": 70,
+					"y": 490,
+					"w": 250,
+					"h": 100
+				}
+			},
+			{
+				"item": "viz_L0GYdOqK",
+				"type": "block",
+				"position": {
+					"x": 1300,
+					"y": 310,
+					"w": 60,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_z6eOwMXh",
+				"type": "block",
+				"position": {
+					"x": 1320,
+					"y": 400,
+					"w": 60,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_mfdaVIpI",
+				"type": "block",
+				"position": {
+					"x": 1300,
+					"y": 490,
+					"w": 60,
+					"h": 50
+				}
+			}
+		],
+		"globalInputs": [
+			"input_global_trp"
+		]
+	},
+	"description": "",
+	"title": "Health"
+}
+    ]]></definition>
+    <meta type="hiddenElements"><![CDATA[
+{
+	"hideEdit": false,
+	"hideOpenInSearch": false,
+	"hideExport": false
+}
+    ]]></meta>
+</dashboard>

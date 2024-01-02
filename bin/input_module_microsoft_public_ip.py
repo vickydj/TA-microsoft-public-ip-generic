@@ -4,11 +4,13 @@ import os
 import sys
 import time
 import datetime
+import socket
 from lxml import html
 import json
 import csv
 from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
+
 
 def validate_input(helper, definition):
     parameters = definition.parameters
@@ -18,6 +20,15 @@ def validate_input(helper, definition):
 def is_https_url(url):
     parsed_url = urlsplit(url)
     return parsed_url.scheme == 'https'
+    
+def is_internet_connected():
+    try:
+        socket.create_connection(("8.8.8.8", 53), timeout=5)
+        return True
+    except OSError:
+        pass
+    return False
+
     
 def get_download_link(helper,url):
 
@@ -31,7 +42,7 @@ def get_download_link(helper,url):
         tree = html.fromstring(response.content)
         element = tree.xpath('//a[@data-bi-id="downloadretry"]')
         deep_link = element[0].attrib["href"]
-        helper.log_debug("Check deeplink is https : {}".format(deep_link))
+        helper.log_info("Check deeplink is https : {}".format(deep_link))
         
         if (is_https_url(deep_link)):
             return deep_link
@@ -131,24 +142,32 @@ def download_data(helper,deep_link):
     return response
     
 def collect_events(helper, ew):
+    # Construct the URL using the provided region and download URL ID
+    url = "https://www.microsoft.com/en-{}/download/confirmation.aspx?id={}".format(
+        helper.get_arg('url_region'), helper.get_arg('download_url_id'))
 
-    url="https://www.microsoft.com/en-{}/download/confirmation.aspx?id={}".format(helper.get_arg('url_region'),helper.get_arg('download_url_id'))
+    # Check internet connectivity before proceeding
+    if is_internet_connected():
+        helper.log_info("Internet connection success to 8.8.8.8")
+        deep_link = get_download_link(helper, url) 
+        response = download_data(helper, deep_link)
+        
+        # Process the downloaded data based on the specified file format
+        try:
+            file_format_local = helper.get_arg('file_format')
 
-    deep_link=get_download_link(helper,url)
-    response=download_data(helper,deep_link)
-    try:
-        file_format_local=helper.get_arg('file_format')
+            if file_format_local.lower() == 'json':
+                index_json(helper, ew, response)
+            elif file_format_local.lower() == 'csv':
+                index_csv(helper, ew, response)
+            elif file_format_local.lower() == 'xml':
+                index_xml(helper, ew, response)
+            else:
+                index_events(helper, ew, response.text)
+                helper.log_info("Indexed raw events into index={} sourcetype={} source={}".format(
+                    helper.get_arg('index'), helper.get_sourcetype(), "Microsoft://{}".format(helper.get_input_stanza_names())))
+        except Exception as e:
+            helper.log_error("Error processing data: {}".format(str(e)))
+    else:
+        helper.log_error("Internet connection not available. Skipping data collection.")
 
-        if file_format_local.lower() == 'json':
-            index_json(helper,ew,response)
-        elif file_format_local.lower() == 'csv':
-            index_csv(helper,ew,response)
-        elif file_format_local.lower() == 'xml':
-            index_xml(helper,ew,response)
-        else:
-            index_events(helper,ew,response.text)
-            helper.log_info("Indexed raw events into index={} sourcetype={} source={}".format(helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
-                
-    except Exception as e:
-        helper.log_error("Exception while indexing : {}".format(e))
-        os._exit(1)
