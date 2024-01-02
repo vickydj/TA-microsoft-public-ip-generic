@@ -12,3 +12,10 @@ Change log v1.0.6
 *Added inputs template for easier use of data feeds
 
 *Minor changes to pass Upgrade Readiness App test for V9
+
+Change log v1.0.7
+===================
+*Added health checks on the data feed.
+
+*Quick check dashboard
+    
