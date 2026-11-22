@@ -121,6 +121,25 @@ index=<your_index> sourcetype=info:public:ip source="microsoft://<input_name>"
 This add-on is community supported. Report issues and questions at
 https://github.com/vickydj/TA-microsoft-public-ip-generic/issues
 
+## Development
+
+| What | Where | When |
+|---|---|---|
+| Lint: committed `local/`, `local.meta`, `*.backup`, bytecode, tokens, `$7$` secrets or private keys; REST endpoints without authentication; Python that turns off TLS verification | `ci/lint.sh` | pre-push hook, CI |
+| Python checks (no unit tests): `bin/*.py` compiles and runs on Python 3.9 | `validate.yml` | CI |
+| Package for Splunkbase (from the files git tracks; no tests, CI files or dotfiles) | `ci/build.sh` → `dist/` | CI |
+| Splunk AppInspect (Splunkbase + Cloud checks) and the Packaging Toolkit (`slim validate`) | `ci/check.sh` | CI |
+
+- **Pull requests and pushes to `main`** run `.github/workflows/validate.yml`. It uploads the package and the
+  AppInspect report as a build artifact. Make **Validate Splunk app** a required status check on `main`.
+- **Releases**: bump the version in `default/app.conf` (`[launcher]` and `[id]`, and `app.manifest`), add a
+  `### <version>` section to the change log below, merge, then `git tag v<version> && git push origin v<version>`.
+  `.github/workflows/release.yml` checks the tag matches the app version, builds and checks the package, and
+  publishes a GitHub release with the package, `SHA256SUMS` and the AppInspect report. Upload that package to
+  Splunkbase.
+- **Pre-push hook**: enable once per clone with `git config core.hooksPath ci/hooks`. It runs the lint (about a
+  second). `git push --no-verify` skips it.
+
 ## Change log
 
 ### 1.0.10

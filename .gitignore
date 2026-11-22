@@ -1,0 +1,10 @@
+# Python bytecode (must not be committed or packaged)
+__pycache__/
+*.py[cod]
+
+# Instance state and build output
+local/
+metadata/local.meta
+dist/
+*.tgz
+*.spl

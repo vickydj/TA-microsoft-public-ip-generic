@@ -1,0 +1,51 @@
+# Merge gate. Make it required: Settings -> Branches -> rule for "main" ->
+# "Require status checks to pass" -> "Validate Splunk app".
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Splunk app
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install tools
+        run: pip install -q -r ci/requirements.txt "vermin==1.9.2"
+
+      - name: Lint (secrets, instance state, authentication, TLS)
+        run: bash ci/lint.sh
+
+      - name: Add-on code compiles and runs on Python 3.9 (python.required = 3.9, 3.13)
+        run: |
+          python -m py_compile bin/*.py
+          vermin --no-tips --violations -t=3.9- bin/*.py
+
+      - name: Build package
+        run: bash ci/build.sh
+
+      - name: Splunk AppInspect and SLIM
+        run: bash ci/check.sh
+
+      - name: Upload package and AppInspect report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: splunk-package
+          path: |
+            dist/*.tgz
+            dist/SHA256SUMS
+            dist/appinspect.json
+          if-no-files-found: ignore
