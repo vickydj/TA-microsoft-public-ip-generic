@@ -42,11 +42,6 @@
     "tasks": [],
     "inputGroups": {},
     "incompatibleApps": {},
-    "platformRequirements": {
-        "splunk": {
-            "Enterprise": ">=9.3.0"
-        }
-    },
     "supportedDeployments": [
         "*"
     ],
