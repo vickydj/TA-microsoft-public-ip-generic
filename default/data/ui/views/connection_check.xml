@@ -1,0 +1,452 @@
+
+<dashboard version="2" theme="dark">
+    <label>Connection check</label>
+    <description></description>
+    <definition><![CDATA[
+{
+	"visualizations": {
+		"viz_12b71Tuh": {
+			"type": "splunk.singlevalue",
+			"dataSources": {
+				"primary": "ds_PEUtKKqU"
+			},
+			"context": {
+				"trendColorEditorConfig": [
+					{
+						"to": 0,
+						"value": "#9E2520"
+					},
+					{
+						"from": 0,
+						"value": "#1C6B2D"
+					}
+				]
+			},
+			"title": "Inputs trend",
+			"showProgressBar": false,
+			"showLastUpdated": false,
+			"options": {
+				"sparklineDisplay": "after",
+				"trendColor": "> trendValue | rangeValue(trendColorEditorConfig)"
+			}
+		},
+		"viz_ZAZKsev7": {
+			"type": "splunk.linkgraph",
+			"options": {
+				"nodeWidth": 300,
+				"nodeHeight": 70,
+				"nodeSpacingY": 50,
+				"nodeSpacingX": 70,
+				"linkWidth": 2,
+				"resultLimit": 10,
+				"backgroundColor": "#000000",
+				"linkColor": "#f8be34",
+				"nodeColor": "#161c20",
+				"showNodeCounts": false
+			},
+			"dataSources": {
+				"primary": "ds_eWXtDXNx"
+			},
+			"title": "Network status by nodes"
+		},
+		"viz_DhlWvSn4": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"icon": "splunk-enterprise-kvstore://icon-cloud__b26f30f1-329e-4739-89ab-0a8a8bd24e7d.svg",
+				"iconColor": "> majorValue | rangeValue(iconColorEditorConfig)",
+				"showValue": false
+			},
+			"dataSources": {
+				"primary": "ds_mJi0UNa1"
+			},
+			"context": {
+				"iconColorEditorConfig": [
+					{
+						"value": "#D41F1F",
+						"to": 1
+					},
+					{
+						"value": "#CBA700",
+						"from": 1,
+						"to": 2
+					},
+					{
+						"value": "#118832",
+						"from": 2
+					}
+				]
+			}
+		},
+		"viz_CIPGuoVW": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"icon": "splunk-enterprise-kvstore://icon-datastores__bc6a3e09-0548-405c-a5aa-916e6b8b5069.svg",
+				"showValue": false,
+				"iconColor": "> majorValue | rangeValue(iconColorEditorConfig)"
+			},
+			"dataSources": {
+				"primary": "ds_adwcMlaD"
+			},
+			"context": {
+				"iconColorEditorConfig": [
+					{
+						"to": 20,
+						"value": "#D41F1F"
+					},
+					{
+						"from": 20,
+						"to": 40,
+						"value": "#D94E17"
+					},
+					{
+						"from": 40,
+						"to": 60,
+						"value": "#CBA700"
+					},
+					{
+						"from": 60,
+						"to": 80,
+						"value": "#669922"
+					},
+					{
+						"from": 80,
+						"value": "#118832"
+					}
+				]
+			}
+		},
+		"viz_uZyuJHEx": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"showValue": false,
+				"icon": "splunk-enterprise-kvstore://icon-desktop__65679a5e-ea9f-4dfc-9a72-e31b0f8b10ef.svg"
+			},
+			"dataSources": {
+				"primary": "ds_mJi0UNa1"
+			}
+		},
+		"viz_a3ro0WJX": {
+			"type": "splunk.singlevalueicon",
+			"options": {
+				"icon": "splunk-enterprise-kvstore://icon-server__3fcecd0d-1645-4745-bdec-9a612660b662.svg",
+				"unitPosition": "before",
+				"showValue": false,
+				"iconColor": "> majorValue | rangeValue(iconColorEditorConfig)"
+			},
+			"dataSources": {
+				"primary": "ds_cH8dxy3D"
+			},
+			"context": {
+				"iconColorEditorConfig": [
+					{
+						"to": 20,
+						"value": "#D41F1F"
+					},
+					{
+						"from": 20,
+						"to": 40,
+						"value": "#D94E17"
+					},
+					{
+						"from": 40,
+						"to": 60,
+						"value": "#CBA700"
+					},
+					{
+						"from": 60,
+						"to": 80,
+						"value": "#669922"
+					},
+					{
+						"from": 80,
+						"value": "#118832"
+					}
+				]
+			}
+		},
+		"viz_kgN28gR4": {
+			"type": "splunk.markdown",
+			"options": {
+				"markdown": ""
+			}
+		},
+		"viz_Bstrlk81": {
+			"type": "abslayout.line"
+		},
+		"viz_dYu9Dbe9": {
+			"type": "abslayout.line"
+		},
+		"viz_9cW9XSd9": {
+			"type": "abslayout.line"
+		},
+		"viz_rHTk4fW7": {
+			"type": "splunk.singlevalue",
+			"dataSources": {
+				"primary": "ds_eWXtDXNx"
+			},
+			"options": {
+				"sparklineDisplay": "off",
+				"backgroundColor": "transparent",
+				"trendColor": "transparent"
+			}
+		},
+		"viz_yyh7QjO8": {
+			"type": "splunk.singlevalue",
+			"options": {
+				"backgroundColor": "transparent",
+				"sparklineDisplay": "after"
+			},
+			"dataSources": {
+				"primary": "ds_cH8dxy3D"
+			}
+		},
+		"viz_PT2llFGg": {
+			"type": "splunk.image",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "splunk-enterprise-kvstore://654fcb377ce238ea0103b068"
+			}
+		}
+	},
+	"dataSources": {
+		"ds_gLEbG3o2": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=_internal source=\"/opt/splunk/var/log/splunk/ta_microsoft_public_ip_generic_microsoft_public_ip.log\" sourcetype=\"tamicrosoftpublicipgeneric:log\" ",
+				"enableSmartSources": true
+			},
+			"name": "basefilter"
+		},
+		"ds_PEUtKKqU": {
+			"type": "ds.chain",
+			"options": {
+				"query": "Search \"Indexed * events\" \n| rex field=_raw \"source=(?<input>[^ ]+)\" \n| timechart count by input",
+				"extend": "ds_gLEbG3o2"
+			},
+			"name": "connection to microsoft"
+		},
+		"ds_eWXtDXNx": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=_internal source=\"/opt/splunk/var/log/splunk/ta_microsoft_public_ip_generic_microsoft_public_ip.log\" sourcetype=\"tamicrosoftpublicipgeneric:log\"  src=* src!=\"{}\"  status!=TEST | stats  count by src, dest, status \n|  fields - count",
+				"queryParameters": {
+					"earliest": "$global_time.earliest$",
+					"latest": "$global_time.latest$"
+				}
+			},
+			"name": "nodes_connection"
+		},
+		"ds_cH8dxy3D": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_gLEbG3o2",
+				"query": " | search \"Indexed * events\"| rex field=_raw \"Indexed (?<event_count>\\d+) events\"\r\n| stats sum(event_count)"
+			},
+			"name": "Msft to Splunk"
+		},
+		"ds_mJi0UNa1": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_gLEbG3o2",
+				"query": "|  search \"Destination : internet\" \n| stats count"
+			},
+			"name": "host to internet"
+		},
+		"ds_adwcMlaD": {
+			"type": "ds.chain",
+			"options": {
+				"query": " | search \"Destination : microsoft\" ",
+				"extend": "ds_gLEbG3o2"
+			},
+			"name": "host to msft"
+		}
+	},
+	"defaults": {
+		"dataSources": {
+			"ds.search": {
+				"options": {
+					"queryParameters": {
+						"latest": "$global_time.latest$",
+						"earliest": "$global_time.earliest$"
+					}
+				}
+			}
+		}
+	},
+	"inputs": {
+		"input_global_trp": {
+			"type": "input.timerange",
+			"options": {
+				"token": "global_time",
+				"defaultValue": "-60m@m,now"
+			},
+			"title": "Global Time Range"
+		}
+	},
+	"layout": {
+		"type": "absolute",
+		"options": {
+			"width": 1440,
+			"height": 1440,
+			"backgroundColor": "#000000"
+		},
+		"structure": [
+			{
+				"item": "viz_ZAZKsev7",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 820,
+					"w": 1200,
+					"h": 610
+				}
+			},
+			{
+				"item": "viz_12b71Tuh",
+				"type": "block",
+				"position": {
+					"x": 20,
+					"y": 630,
+					"w": 1190,
+					"h": 160
+				}
+			},
+			{
+				"item": "viz_DhlWvSn4",
+				"type": "block",
+				"position": {
+					"x": 480,
+					"y": -30,
+					"w": 280,
+					"h": 290
+				}
+			},
+			{
+				"item": "viz_CIPGuoVW",
+				"type": "block",
+				"position": {
+					"x": 930,
+					"y": 340,
+					"w": 250,
+					"h": 250
+				}
+			},
+			{
+				"item": "viz_uZyuJHEx",
+				"type": "block",
+				"position": {
+					"x": 30,
+					"y": 330,
+					"w": 250,
+					"h": 250
+				}
+			},
+			{
+				"item": "viz_a3ro0WJX",
+				"type": "block",
+				"position": {
+					"x": 270,
+					"y": 400,
+					"w": 130,
+					"h": 140
+				}
+			},
+			{
+				"item": "viz_kgN28gR4",
+				"type": "block",
+				"position": {
+					"x": 70,
+					"y": 380,
+					"w": 160,
+					"h": 90
+				}
+			},
+			{
+				"item": "viz_Bstrlk81",
+				"type": "line",
+				"position": {
+					"from": {
+						"x": 155,
+						"y": 329
+					},
+					"to": {
+						"x": 480,
+						"y": 114
+					}
+				}
+			},
+			{
+				"item": "viz_dYu9Dbe9",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_CIPGuoVW",
+						"port": "n"
+					},
+					"to": {
+						"item": "viz_DhlWvSn4",
+						"port": "e"
+					}
+				}
+			},
+			{
+				"item": "viz_9cW9XSd9",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_a3ro0WJX",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_CIPGuoVW",
+						"port": "w"
+					}
+				}
+			},
+			{
+				"item": "viz_rHTk4fW7",
+				"type": "block",
+				"position": {
+					"x": 60,
+					"y": 430,
+					"w": 190,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_yyh7QjO8",
+				"type": "block",
+				"position": {
+					"x": 510,
+					"y": 410,
+					"w": 340,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_PT2llFGg",
+				"type": "block",
+				"position": {
+					"x": 190,
+					"y": 370,
+					"w": 80,
+					"h": 40
+				}
+			}
+		],
+		"globalInputs": [
+			"input_global_trp"
+		]
+	},
+	"description": "",
+	"title": "Connection check"
+}
+    ]]></definition>
+    <meta type="hiddenElements"><![CDATA[
+{
+	"hideEdit": true,
+	"hideOpenInSearch": true,
+	"hideExport": false
+}
+    ]]></meta>
+</dashboard>

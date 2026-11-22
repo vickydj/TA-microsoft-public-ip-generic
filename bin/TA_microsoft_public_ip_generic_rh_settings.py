@@ -91,11 +91,27 @@ fields_logging = [
 model_logging = RestModel(fields_logging, name='logging')
 
 
+fields_additional_parameters = [
+    field.RestField(
+        'internet_check_url',
+        required=False,
+        encrypted=False,
+        default='https://www.google.com',
+        validator=validator.String(
+            min_len=0, 
+            max_len=8192, 
+        )
+    )
+]
+model_additional_parameters = RestModel(fields_additional_parameters, name='additional_parameters')
+
+
 endpoint = MultipleModel(
     'ta_microsoft_public_ip_generic_settings',
     models=[
         model_proxy, 
-        model_logging
+        model_logging, 
+        model_additional_parameters
     ],
 )
 

@@ -9,3 +9,6 @@ proxy_rdns =
 
 [logging]
 loglevel = 
+
+[additional_parameters]
+internet_check_url = 
