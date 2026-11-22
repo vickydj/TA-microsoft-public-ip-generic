@@ -1,183 +1,167 @@
 # encoding = utf-8
 
-import os
-import sys
-import time
-import datetime
-import socket
-from lxml import html
-import json
 import csv
-from urllib.parse import urlsplit
+import io
+import json
+import socket
+import time
 import xml.etree.ElementTree as ET
+from urllib.parse import urlsplit
+
+from lxml import html
+
+HEADERS = {
+    # Microsoft's download pages return 403 for non-browser user agents.
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                  '(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0'
+}
+DLC_MARKER = 'window.__DLCDetails__='
 
 
 def validate_input(helper, definition):
-    parameters = definition.parameters
-    input_value = parameters.get('download_url_id', None)
-    pass
+    download_url_id = (definition.parameters.get('download_url_id') or '').strip()
+    if not download_url_id.isdigit():
+        raise ValueError(
+            "Download URL ID must be the numeric id from "
+            "https://www.microsoft.com/en-us/download/details.aspx?id=<id>")
 
-def is_https_url(url):
-    parsed_url = urlsplit(url)
-    return parsed_url.scheme == 'https'
-    
-def is_internet_connected():
-    try:
-        socket.create_connection(("8.8.8.8", 53), timeout=5)
+
+def log_connection(helper, destination, ok):
+    # Parsed by EXTRACT-connection_check (props.conf) for the Connection check dashboard.
+    helper.log_info("Source : {} Destination : {} Status : {}".format(
+        socket.gethostname(), destination, "Success" if ok else "Failure"))
+
+
+def check_internet(helper):
+    """Optional reachability check against the 'Internet check URL' add-on setting.
+
+    Goes through send_http_request, so the configured proxy is used.
+    An empty setting skips the check.
+    """
+    check_url = (helper.get_global_setting('internet_check_url') or '').strip()
+    if not check_url:
         return True
-    except OSError:
-        pass
-    return False
-
-    
-def get_download_link(helper,url):
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0'
-    }
-    
     try:
-        response = helper.send_http_request(url, "GET", headers=headers, timeout=120, verify=False)
+        resp = helper.send_http_request(check_url, "GET", headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+    except Exception as e:
+        log_connection(helper, "internet", False)
+        helper.log_error("Internet check to {} failed: {}".format(check_url, e))
+        return False
+    log_connection(helper, "internet", True)
+    return True
 
+
+def get_download_link(helper, url):
+    """Return the https download URL from the Microsoft download details page, or None."""
+    try:
+        response = helper.send_http_request(url, "GET", headers=HEADERS, timeout=120)
         response.raise_for_status()
-        tree = html.fromstring(response.content)
-        helper.log_debug(response.content)
-
-        script_content = tree.xpath('//script[contains(text(), "window.__DLCDetails__")]/text()')[0]
-        json_data = json.loads(script_content.split('window.__DLCDetails__=')[1].split(';</script>')[0])
-        
-        deep_link = json_data['dlcDetailsView']['downloadFile'][0]['url']
-        helper.log_info("Download link: {}".format(deep_link))
-        if not deep_link:
-            raise ValueError("Download link not found")
-        helper.log_info("Download link: {}".format(deep_link))
-
-       
-        if (is_https_url(deep_link)):
-            helper.log_info("Source :{} Destination : {} Status : Success".format("microsoft",socket.gethostname()))
-            return deep_link
-        
     except Exception as e:
+        log_connection(helper, "microsoft", False)
         helper.log_error("Exception on getting deep_link : {}".format(e))
-        os._exit(1)
+        return None
+    log_connection(helper, "microsoft", True)
 
-
-def index_events(helper,ew,item):
-
-    index=helper.get_arg('index')
-    input_name = helper.get_input_stanza_names()
-    sourcetype = helper.get_sourcetype()
-    source = "microsoft://{}".format(input_name).lower()
-    host = 'localhost'
-    # helper.log_debug(items)
-
-    helper.log_debug("Indexing item {}".format(item))
-    event=helper.new_event(
-        item,
-        time=datetime.datetime.now(),
-        host=host,
-        index=index,
-        source=source,
-        sourcetype=sourcetype,
-        done=True,
-        unbroken=True
-    )
-    ew.write_event(event)
-    return
-
-def index_json(helper,ew,response):
-    index_counter=0
-    helper.log_debug("JSON : {} ".format(response.text))
-    obj = response.json()
-    items = obj.get("values",[])
-    for i in items:
-        index_counter+=1
-        text=json.dumps(i)
-        index_events(helper,ew,text)
-    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(index_counter,helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
-    return
-
-def index_csv(helper,ew,response):
-    
-    index_counter=0
-    csv=response.text
-    rows = csv.split('\n')
-    fieldnames = rows[0].split(',')
-    json_data = []
-    for row in rows [1:(len(rows)-1)]:
-        data = {}
-        for i, value in enumerate(row.split(',')):
-            data[fieldnames[i].strip()]=value.strip()
-            index_counter+=1
-            helper.log_debug("fieldname :\"{}\": \"value : \"{}\"".format(fieldnames[i].strip(),value.strip()))
-
-        helper.log_debug("csv_json_converted_event: {}".format(data))
-        index_events(helper,ew,"{}".format(json.dumps(data)))
-    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(index_counter,helper.get_arg('index'),helper.get_sourcetype(),"Microsoft://{}".format(helper.get_input_stanza_names())))
-    return
-
-def index_xml(helper, ew, response):
-    
-    index_counter = 0
-
-    xml_tree = ET.fromstring(response.text)
-    json_data = {}
-
-    for region in xml_tree.findall('Region'):
-        region_name = region.get('Name')
-        ip_ranges = []
-        index_counter += 1
-        
-        for ip_range in region.findall('IpRange'):
-            subnet = ip_range.get('Subnet')
-            ip_ranges.append(subnet)
-        json_data[region_name] = ip_ranges
-
-    helper.log_debug("xml_json_converted_event: {}".format(json.dumps(json_data)))
-    index_events(helper,ew,"{}".format(json.dumps(json_data)))
-
-    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(
-      index_counter, helper.get_arg('index'), helper.get_sourcetype(),
-      "Microsoft://{}".format(helper.get_input_stanza_names())))
-    return
-
-def download_data(helper,deep_link):
     try:
-        helper.log_info("Download file initiated : {}".format(deep_link))
-        response = helper.send_http_request(deep_link, "GET", timeout=200,verify=False)
-    
+        tree = html.fromstring(response.content)
+        scripts = tree.xpath('//script[contains(text(), "window.__DLCDetails__")]/text()')
+        if not scripts:
+            raise ValueError("window.__DLCDetails__ not found on page")
+        details, _ = json.JSONDecoder().raw_decode(scripts[0].split(DLC_MARKER, 1)[1])
+        files = details['dlcDetailsView']['downloadFile']
+        deep_link = files[0]['url'] if files else None
     except Exception as e:
-        helper.log_error("Exception while downloading : {}".format(e))
-        os._exit(1)
+        helper.log_error("Exception on getting deep_link : could not parse {}: {}".format(url, e))
+        return None
+
+    if not deep_link:
+        helper.log_error("Exception on getting deep_link : no download file listed on {}".format(url))
+        return None
+    if urlsplit(deep_link).scheme != 'https':
+        helper.log_error("Exception on getting deep_link : refusing non-https link {}".format(deep_link))
+        return None
+    helper.log_info("Download link: {}".format(deep_link))
+    return deep_link
+
+
+def download_data(helper, deep_link):
+    helper.log_info("Download file initiated : {}".format(deep_link))
+    try:
+        response = helper.send_http_request(deep_link, "GET", headers=HEADERS, timeout=200)
+        response.raise_for_status()
+    except Exception as e:
+        helper.log_error("Exception while downloading {} : {}".format(deep_link, e))
+        return None
     return response
-    
+
+
+def write_event(helper, ew, data, source):
+    ew.write_event(helper.new_event(
+        data,
+        time="%.3f" % time.time(),
+        index=helper.get_arg('index'),
+        source=source,
+        sourcetype=helper.get_sourcetype(),
+        done=True,
+        unbroken=True))
+
+
+def iter_json(response):
+    for item in response.json().get("values", []):
+        yield json.dumps(item)
+
+
+def iter_csv(response):
+    reader = csv.DictReader(io.StringIO(response.content.decode('utf-8-sig')))
+    for row in reader:
+        yield json.dumps({(k or '').strip(): (v or '').strip() for k, v in row.items()})
+
+
+def iter_xml(response):
+    # Single event {region_name: [subnets]}, e.g. PublicIPs_<date>.xml (id=41653)
+    root = ET.fromstring(response.content)
+    yield json.dumps({
+        region.get('Name'): [r.get('Subnet') for r in region.findall('IpRange')]
+        for region in root.findall('Region')
+    })
+
+
+def iter_raw(response):
+    yield response.text
+
+
+PARSERS = {'json': iter_json, 'csv': iter_csv, 'xml': iter_xml, 'raw': iter_raw}
+
+
 def collect_events(helper, ew):
-    # Construct the URL using the provided region and download URL ID
+    input_name = helper.get_input_stanza_names()
+    source = "microsoft://{}".format(input_name).lower()
     url = "https://www.microsoft.com/en-{}/download/details.aspx?id={}".format(
-        helper.get_arg('url_region'), helper.get_arg('download_url_id'))
+        helper.get_arg('url_region') or 'us', (helper.get_arg('download_url_id') or '').strip())
     helper.log_info("URL : {}".format(url))
 
-    # Check internet connectivity before proceeding
-    if is_internet_connected():
-        helper.log_info("Internet connection success to 8.8.8.8")
-        deep_link = get_download_link(helper, url) 
-        response = download_data(helper, deep_link)
-        
-        # Process the downloaded data based on the specified file format
-        try:
-            file_format_local = helper.get_arg('file_format')
+    if not check_internet(helper):
+        return
 
-            if file_format_local.lower() == 'json':
-                index_json(helper, ew, response)
-            elif file_format_local.lower() == 'csv':
-                index_csv(helper, ew, response)
-            elif file_format_local.lower() == 'xml':
-                index_xml(helper, ew, response)
-            else:
-                index_events(helper, ew, response.text)
-                helper.log_info("Indexed raw events into index={} sourcetype={} source={}".format(
-                    helper.get_arg('index'), helper.get_sourcetype(), "Microsoft://{}".format(helper.get_input_stanza_names())))
-        except Exception as e:
-            helper.log_error("Error processing data: {}".format(str(e)))
-    else:
-        helper.log_error("Internet connection not available. Skipping data collection.")
+    deep_link = get_download_link(helper, url)
+    if not deep_link:
+        return
+    response = download_data(helper, deep_link)
+    if response is None:
+        return
+
+    file_format = (helper.get_arg('file_format') or 'raw').lower()
+    parser = PARSERS.get(file_format, iter_raw)
+    count = 0
+    try:
+        for data in parser(response):
+            write_event(helper, ew, data, source)
+            count += 1
+    except Exception as e:
+        helper.log_error("Error processing {} data from {} after {} events: {}".format(
+            file_format, deep_link, count, e))
+        return
+
+    helper.log_info("Indexed {} events into index={} sourcetype={} source={}".format(
+        count, helper.get_arg('index'), helper.get_sourcetype(), source))
